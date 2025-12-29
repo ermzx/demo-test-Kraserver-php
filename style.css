@@ -83,3 +83,23 @@ body.export-mode #export-notice {
         max-width: none !important;
     }
 }
+
+/* --- 昵称设置弹窗样式 --- */
+.custom-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 9999;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.custom-modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
+.modal-content-box {
+    background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* 昵称显示区域的可点击样式 */
+.nickname-trigger {
+    cursor: pointer; border-bottom: 1px dashed #aaa; transition: color 0.2s;
+}
+.nickname-trigger:hover { color: var(--primary-color); border-bottom-color: var(--primary-color); }
