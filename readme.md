@@ -1,63 +1,311 @@
-# Kindle 阅读统计系统
+# Kindle Reading GTK 云同步服务端
 
-这是一个基于 PHP 开发的 Kindle 阅读统计网页，主要目的是与Kindle阅读统计插件 [TQHYG/kykky](https://github.com/TQHYG/kykky) 配合使用，方便用户从插件导出数据并分享。
+基于 PHP 8 和 GitHub OAuth 的 Kindle 阅读日志云同步服务端 Demo。
 
-## 主要功能
+## 项目简介
 
-### 1. 数据收集方式
-- **插件扫码**: 通过 [TQHYG/kykky](https://github.com/TQHYG/kykky) 插件生成二维码，快速导出当月数据。
-- **文件上传**: 支持上传 Kindle 插件生成的 log 文件夹，用于进行完整的数据分析和图片导出。
+Kindle Reading GTK 云同步服务端是一个用于同步 Kindle 阅读日志的云服务。用户可以通过 GitHub OAuth 认证登录，将 Kindle 设备上的阅读日志上传到云端，并通过 Web 界面管理设备和日志文件。
 
-### 2. 统计展示
-- **时段分布**: 展示每天 24 小时内的阅读时间分布（按 2 小时一个区间）
-- **月度趋势**: 显示当月每日阅读量的变化趋势
-- **阅读日历**: 以日历形式展示整月阅读情况，直观显示达标天数
-- **数据概览**: 包括今日时长、本月累计、达标天数、连续达标天数等核心指标
+## 主要特性
 
-### 3. 特色功能
-- **报告导出**: 支持将统计报告导出为图片，便于分享
-- **响应式设计**: 支持 PC 和移动端访问，适配不同屏幕尺寸
+- ✅ **GitHub OAuth 认证**：使用 GitHub 账号登录，安全便捷
+- ✅ **多设备支持**：一个账号可绑定多个 Kindle 设备
+- ✅ **日志上传**：支持上传 Kindle 阅读日志文件（.log, .txt）
+- ✅ **用户管理界面**：Web 界面管理设备和日志
+- ✅ **设备管理**：支持设备重命名和解绑
+- ✅ **日志下载**：支持下载原始日志文件
+- ✅ **安全验证**：文件类型、大小、哈希验证
 
-## 使用方法
+## 技术栈
 
-1. **首页入口**
-   - 访问 `index.php` 进入主界面
-   - 可选择扫码获取数据或上传文件
+- **后端**：PHP 8.0+
+- **数据库**：MySQL 5.7+ / MariaDB 10.2+
+- **Web 服务器**：Nginx / Apache
+- **认证**：GitHub OAuth 2.0
+- **依赖管理**：Composer
 
-2. **扫码同步**
-   - 在 Kindle 设备上安装 [TQHYG/kykky](https://github.com/TQHYG/kykky) 插件
-   - 通过插件生成二维码并扫描同步数据
-
-3. **文件上传**
-   - 上传 Kindle 中 `extensions/kykky/log` 目录下的数据文件
-   - 系统自动解析 `metrics_reader_*` 和 `history.gz` 文件
-
-4. **数据查看**
-   - 上传或同步成功后进入统计看板
-   - 可切换不同月份查看历史数据
-   - 支持导出完整报告或单独导出某个统计模块
-
-## 技术架构
-
-- **前端**: HTML5 + CSS3 + JavaScript + Bootstrap 5 + Chart.js
-- **后端**: PHP 7+
-- **数据存储**: 浏览器 localStorage
-- **图表库**: Chart.js
-- **截图导出**: html2canvas
-
-## 文件结构
+## 项目结构
 
 ```
-├── index.php        # 首页入口
-├── upload.php       # 文件上传和数据展示页面
-├── share.php        # 数据展示和分享页面
-├── functions.php    # 核心数据处理函数
-├── style.css        # 样式文件
-└── readme.md        # 项目说明文档
+kindle-reading-php/
+├── config/               # 配置文件目录
+│   ├── config.php        # 主配置文件
+│   ├── database.php      # 数据库配置
+│   └── oauth.php         # OAuth 配置
+├── src/                  # 源代码目录
+│   ├── Core/             # 核心类
+│   ├── Auth/             # 认证相关
+│   ├── Models/           # 数据模型
+│   ├── Services/         # 业务服务层
+│   └── Utils/            # 工具类
+├── api/                  # API 接口目录
+├── public/               # Web 根目录
+│   ├── assets/           # 静态资源
+│   │   ├── css/
+│   │   └── js/
+│   └── uploads/          # 上传文件存储目录
+├── storage/              # 存储目录
+│   ├── logs/             # 日志文件
+│   ├── cache/            # 缓存文件
+│   └── sessions/         # 会话文件
+├── database/             # 数据库相关
+│   └── schema.sql        # 数据库结构
+├── scripts/              # 脚本目录
+├── nginx/                # Nginx 配置
+├── docs/                 # 文档目录
+├── composer.json         # Composer 配置
+├── .env.example          # 环境变量配置示例
+├── .gitignore            # Git 忽略文件
+└── readme.md             # 项目说明文档
 ```
 
-## 自托管服务
+## 数据库设计
 
-Kindle上的阅读统计插件生成二维码时默认使用我托管的页面（ https://reading.tqhyg.net ），你可以修改插件的配置文件使用自托管服务：
+项目使用 5 张表：
 
-在插件目录内的 etc/config.ini 文件中修改第二行的 share_domain 为自托管服务的域名即可。
+1. **users** - GitHub 用户信息表
+2. **kindle_devices** - Kindle 设备信息表
+3. **reading_logs** - 阅读日志文件表
+4. **oauth_sessions** - OAuth 会话表
+5. **system_config** - 系统配置表
+
+详细数据库结构请参考 [`database/schema.sql`](database/schema.sql)
+
+## 安装步骤
+
+### 1. 环境要求
+
+- PHP 8.0 或更高版本
+- MySQL 5.7+ 或 MariaDB 10.2+
+- Nginx 或 Apache
+- Composer
+
+### 2. 克隆项目
+
+```bash
+git clone https://github.com/your-username/kindle-reading-php.git
+cd kindle-reading-php
+```
+
+### 3. 安装依赖
+
+```bash
+composer install
+```
+
+### 4. 配置环境变量
+
+复制 `.env.example` 为 `.env` 并修改配置：
+
+```bash
+cp .env.example .env
+```
+
+编辑 `.env` 文件，配置以下关键参数：
+
+```env
+# 数据库配置
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=kindle_reading
+DB_USER=your_db_user
+DB_PASS=your_db_password
+
+# GitHub OAuth 配置
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_REDIRECT_URI=https://your-domain.com/api/callback.php
+
+# 应用配置
+APP_URL=https://your-domain.com
+```
+
+### 5. 创建数据库
+
+```bash
+mysql -u root -p < database/schema.sql
+```
+
+### 6. 配置 Web 服务器
+
+#### Nginx 配置示例
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/kindle-reading-php/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+### 7. 设置目录权限
+
+```bash
+chmod -R 755 storage/
+chmod -R 755 public/uploads/
+```
+
+### 8. 配置 GitHub OAuth 应用
+
+1. 访问 [GitHub Developer Settings](https://github.com/settings/developers)
+2. 点击 "New OAuth App"
+3. 填写应用信息：
+   - Application name: Kindle Reading GTK
+   - Homepage URL: https://your-domain.com
+   - Authorization callback URL: https://your-domain.com/api/callback.php
+4. 获取 Client ID 和 Client Secret
+5. 将其填入 `.env` 文件
+
+## API 接口
+
+### 认证接口
+
+#### 请求登录
+```
+POST /api/auth/request
+```
+
+#### 查询登录状态
+```
+GET /api/auth/status?session_token=xxx
+```
+
+### 文件上传接口
+
+#### 上传日志文件
+```
+POST /api/upload
+```
+
+### 用户管理接口
+
+#### 获取用户信息
+```
+GET /api/user/profile
+```
+
+#### 获取设备列表
+```
+GET /api/user/devices
+```
+
+#### 更新设备名称
+```
+PUT /api/user/devices/{id}
+```
+
+#### 解绑设备
+```
+DELETE /api/user/devices/{id}
+```
+
+#### 获取日志文件列表
+```
+GET /api/user/logs
+```
+
+#### 下载日志文件
+```
+GET /api/user/logs/{id}/download
+```
+
+详细 API 文档请参考 [`plans/api-spec.md`](plans/api-spec.md)
+
+## 开发指南
+
+### 代码规范
+
+项目遵循 PSR-12 编码规范。
+
+### 运行测试
+
+```bash
+composer test
+```
+
+### 代码检查
+
+```bash
+composer cs-check
+```
+
+### 代码格式化
+
+```bash
+composer cs-fix
+```
+
+## 安全建议
+
+1. **HTTPS**：生产环境必须使用 HTTPS
+2. **环境变量**：不要将 `.env` 文件提交到版本控制
+3. **数据库密码**：使用强密码
+4. **文件上传**：限制文件类型和大小
+5. **会话管理**：定期清理过期会话
+
+## 日志格式
+
+Kindle 日志格式示例：
+
+```
+appmgrd[2530]: metric_generic,1767366804,timer,appmgrd,logAppActiveDuration,com.lab126.booklet.reader.activeDuration,4236321
+```
+
+日志文件原样存储，不进行解析。
+
+## 故障排除
+
+### 数据库连接失败
+
+检查 `.env` 文件中的数据库配置是否正确。
+
+### OAuth 回调失败
+
+确保 GitHub OAuth 应用的回调 URL 配置正确。
+
+### 文件上传失败
+
+检查 `public/uploads` 目录权限是否正确。
+
+## 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+## 许可证
+
+MIT License
+
+## 联系方式
+
+- 项目主页：https://github.com/your-username/kindle-reading-php
+- 问题反馈：https://github.com/your-username/kindle-reading-php/issues
+
+## 更新日志
+
+### v1.0.0 (2024-01-13)
+
+- 初始版本发布
+- GitHub OAuth 认证
+- 文件上传功能
+- 用户管理界面
+- 多设备支持
+
+---
+
+**注意**：这是一个 Demo 项目，仅供学习和参考使用。生产环境使用前请进行充分的安全测试和性能优化。

@@ -1,0 +1,60 @@
+{
+    "name": "kindle-reading-php/server",
+    "description": "Kindle Reading GTK 云同步服务端 - 基于 PHP 8 和 GitHub OAuth 的阅读日志同步服务",
+    "type": "project",
+    "keywords": [
+        "kindle",
+        "reading",
+        "gtk",
+        "oauth",
+        "github",
+        "sync",
+        "cloud"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kindle Reading GTK Team",
+            "email": "support@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "KindleReading\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KindleReading\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "cs-check": "phpcs --standard=PSR12 src/",
+        "cs-fix": "phpcbf --standard=PSR12 src/",
+        "migrate": "php scripts/migrate.php",
+        "seed": "php scripts/seed.php"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
