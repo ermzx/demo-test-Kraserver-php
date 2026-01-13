@@ -50,13 +50,15 @@ kindle-reading-php/
 │   └── sessions/         # 会话文件
 ├── database/             # 数据库相关
 │   └── schema.sql        # 数据库结构
-├── scripts/              # 脚本目录
-├── nginx/                # Nginx 配置
-├── docs/                 # 文档目录
-├── composer.json         # Composer 配置
-├── .env.example          # 环境变量配置示例
-├── .gitignore            # Git 忽略文件
-└── readme.md             # 项目说明文档
+ ├── scripts/              # 脚本目录
+ ├── nginx/                # Nginx 配置
+ ├── tests/                # 测试目录
+ ├── composer.json         # Composer 配置
+ ├── .env.example          # 环境变量配置示例
+ ├── QUICKSTART.md         # 快速开始指南
+ ├── TESTING.md            # 测试文档
+ ├── .gitignore            # Git 忽略文件
+ └── readme.md             # 项目说明文档
 ```
 
 ## 数据库设计
@@ -225,8 +227,6 @@ GET /api/user/logs
 GET /api/user/logs/{id}/download
 ```
 
-详细 API 文档请参考 [`plans/api-spec.md`](plans/api-spec.md)
-
 ## 开发指南
 
 ### 代码规范
@@ -282,30 +282,3 @@ appmgrd[2530]: metric_generic,1767366804,timer,appmgrd,logAppActiveDuration,com.
 ### 文件上传失败
 
 检查 `public/uploads` 目录权限是否正确。
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-## 许可证
-
-MIT License
-
-## 联系方式
-
-- 项目主页：https://github.com/your-username/kindle-reading-php
-- 问题反馈：https://github.com/your-username/kindle-reading-php/issues
-
-## 更新日志
-
-### v1.0.0 (2024-01-13)
-
-- 初始版本发布
-- GitHub OAuth 认证
-- 文件上传功能
-- 用户管理界面
-- 多设备支持
-
----
-
-**注意**：这是一个 Demo 项目，仅供学习和参考使用。生产环境使用前请进行充分的安全测试和性能优化。
